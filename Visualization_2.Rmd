@@ -1,0 +1,128 @@
+---
+title: "Homework 2"
+output:
+  
+  html_document: default
+  
+---
+Author: Emmanuel Agyemang
+
+```{r}
+#Question 1 Graph 1
+
+
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(tidyverse)
+library(ggrepel)
+library(stringr)
+library(knitr)
+library(htmltools)
+
+
+exceldata <- read_excel('C:\\NSF_Funding_by_Year.xlsx')
+
+
+u_sub <- exceldata %>%
+  dplyr::select(Organization, AwardYear, AWARD_SUM, AWARD_COUNT, AvarageAwardDuration) %>% 
+
+ filter( Organization %in% c("Colorado State University", "Colorado State University-Pueblo", "Iowa State University", "Kansas State University", "North Carolina State University", "Oklahoma State University", "Oregon State University", "Purdue University", "Michigan State University", "Texas A&M University", "University of Illinois at Urbana-Champaign", "Virginia Polytechnic Institute and State University", "University of Tennessee", "University of Tennessee Chattanooga", "The University of Tennessee, Memphis - The Health Science Center", "University of Tennessee Knoxville", "University of Tennessee Institute of Agriculture" , "University of California-Davis", "Texas A&M International University", "Texas A&M University Corpus Christi", "Texas A&M University Main Campus", "Texas A&M University-Commerce", "Washington State University")) %>%
+  
+  
+  mutate(schools = recode (Organization, "Colorado State University" = "CSU", "Colorado State University-Pueblo" = "CSU", "Iowa State University" = "ISU", "Kansas State University"="KSU", "Michigan State University"="MSU", "North Carolina State University"="NCSU", "Oklahoma State University"= "OkSU", "Oregon State University"= "OrSU" , "Purdue University" = "PU", "University of California-Davis" = "UCD" , "University of Illinois at Urbana-Champaign" = "UIUC", "Virginia Polytechnic Institute and State University"="VPISU", "Washington State University" = "WSU", "Texas A&M University" = "TAMU", "Texas A&M International University" = "TAMU", "Texas A&M University Corpus Christi" = "TAMU", "Texas A&M University Main Campus" = "TAMU", "Texas A&M University-Commerce" = "TAMU", "Texas A&M University-Kingsville" = "TAMU", "The Texas A&M University System  HSC Research Foundation" = "TAMU", "University of Tennessee Space Institute" = "UT", "The University of Tennessee, Memphis - The Health Science Center" = "UT", "University of Tennessee Chattanooga" = "UT", "University of Tennessee Institute of Agriculture" = "UT", "University of Tennessee Knoxville" = "UT" )) %>%
+
+
+ filter(AwardYear == 2012) %>% group_by(schools) %>% summarise_at(c('AWARD_COUNT','AWARD_SUM', "AvarageAwardDuration"),sum) 
+
+
+```
+
+### Question 1
+##### Graph 1
+```{r}
+
+
+#Bar Chart 
+ggplot(u_sub, aes(reorder(schools, +AWARD_COUNT), y= AWARD_SUM/1000000, fill = ifelse(schools == "CSU", "darkolivegreen", "gray"))) + geom_bar(stat = "identity") + labs(title = "Bar Chart - NSF Funding 2012", x = "", y = " Award Sum (millions)")  +  guides(fill = "none") + scale_fill_manual(values = c("darkolivegreen","gray"))
+
+
+```
+
+##### Graph 2
+```{r}
+
+#Bubble plot 
+  ggplot(u_sub, aes(schools, x = AWARD_COUNT, y = AWARD_SUM/1000000, size = AvarageAwardDuration)) + geom_point(show.legend = FALSE, alpha = 0.9, aes(color = schools)) + scale_size(range = c(1, 19))  +  theme_light() + scale_color_manual(values = c("darkolivegreen", "grey", "grey", "grey", "grey", "grey", "grey", "grey", "grey", "grey", "grey", "grey","grey", "grey"))  + ylim(0,60) + theme(plot.title = element_text(hjust = 0.5)) + labs(title = "NSF Funding 2012 - Bubble Plot", x = "", y = "Funding (millions)") + geom_text(aes(label = schools), size = 3)
+
+
+```
+
+##### Graph 3
+```{r}
+
+#Scatter plot
+ggplot(u_sub, aes(AWARD_COUNT, AWARD_SUM/1000000))  + geom_point(aes(color = schools)) + guides(size = guide_legend(override.aes = list(color = "black", shape = 16))) + labs(title = "Scatter plot - NSF Funding 2012", x = "Award Count", y = "Total Awards (millions)") + theme(legend.position = "none") + geom_text_repel(aes(label = schools), nudge_x = 0.5, nudge_y = -0.5, segment.color = "gray50", segment.size = 0.5) + scale_color_manual(values = c("darkolivegreen","gray",
+"gray","gray", "gray","gray","gray","gray","gray","gray","gray","gray","gray","gray"))
+
+```
+
+
+
+```{r}
+
+u_sub <- exceldata %>%
+  dplyr::select(Organization, AwardYear, AWARD_SUM, AWARD_COUNT, AwardYear) %>%
+  
+   filter( Organization %in% c("Colorado State University", "Colorado State University-Pueblo", "Iowa State University", "Kansas State University", "North Carolina State University", "Oklahoma State University", "Oregon State University", "Purdue University", "Michigan State University", "Texas A&M University", "University of Illinois at Urbana-Champaign", "Virginia Polytechnic Institute and State University", "University of Tennessee", "University of Tennessee Chattanooga", "The University of Tennessee, Memphis - The Health Science Center", "University of Tennessee Knoxville", "University of Tennessee Institute of Agriculture" , "University of California-Davis", "Texas A&M International University", "Texas A&M University Corpus Christi", "Texas A&M University Main Campus", "Texas A&M University-Commerce", "Washington State University")) %>%
+
+
+  mutate(schools = recode (Organization, "Colorado State University" = "CSU", "Colorado State University-Pueblo" = "CSU", "Iowa State University" = "ISU", "Kansas State University"="KSU", "Michigan State University"="MSU", "North Carolina State University"="NCSU", "Oklahoma State University"= "OkSU", "Oregon State University"= "OrSU" , "Purdue University" = "PU", "University of California-Davis" = "UCD" , "University of Illinois at Urbana-Champaign" = "UIUC", "Virginia Polytechnic Institute and State University"="VPISU", "Washington State University" = "WSU", "Texas A&M University" = "TAMU", "Texas A&M International University" = "TAMU", "Texas A&M University Corpus Christi" = "TAMU", "Texas A&M University Main Campus" = "TAMU", "Texas A&M University-Commerce" = "TAMU", "Texas A&M University-Kingsville" = "TAMU", "The Texas A&M University System  HSC Research Foundation" = "TAMU", "University of Tennessee Space Institute" = "UT", "The University of Tennessee, Memphis - The Health Science Center" = "UT", "University of Tennessee Chattanooga" = "UT", "University of Tennessee Institute of Agriculture" = "UT", "University of Tennessee Knoxville" = "UT" )) %>%
+
+group_by(schools, AwardYear) %>% summarize_at(c('AWARD_COUNT','AWARD_SUM'),sum) 
+  
+
+
+
+
+
+
+```
+
+
+### Question 2
+##### Graph 1
+```{r }
+#Question 2 Graph 1
+
+ggplot(u_sub, aes(x = AwardYear, y = AWARD_SUM/1000000, color = schools)) + geom_line(linewidth = 1, show.legend = TRUE) + geom_point(show.legend = FALSE) + scale_color_manual(values = c("darkolivegreen", "grey", "grey", "grey", "grey", "grey", "grey", "grey","grey","grey","grey","grey","grey","grey")) + theme_light() + scale_x_continuous(breaks = c(2001, 2002, 2003, 2004, 2005, 2006,2007,2008,2009,2010,2011,2012)) +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(angle=50, hjust=1),
+        panel.background = element_rect(fill = "white")) + labs(title = "University Funds Over time",
+                                                                x = "",
+                                                                y = "Funding (millions)")
+
+```
+
+##### Graph 2
+```{r }
+#Question 2 Graph 2
+
+ggplot(u_sub, aes(x = AwardYear, y = AWARD_SUM/1000000, color = schools)) + geom_line(linewidth = 1, show.legend = FALSE) + geom_point(show.legend = FALSE) + scale_color_manual(values = c("darkolivegreen", "grey", "grey", "grey", "grey", "grey", "grey", "grey","grey","grey","grey","grey","grey", "grey")) + theme_light() + scale_x_continuous(breaks = c(2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012)) +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(angle=50, hjust=1),
+        panel.background = element_rect(fill = "white")) + labs(title = "University Funds Over time",
+                                                                x = "",
+                                                                y = "Funding (millions)") + facet_wrap(~schools)
+
+```
+
+
+\newpage
+## Appendix
+
+```{r show-code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+
+```

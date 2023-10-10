@@ -1,0 +1,182 @@
+---
+title: "Emmanuel_Agyemang_HW4"
+author: "Emmanuel Agyemang"
+date: "2023-04-11"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+tinytex::install_tinytex(force = TRUE)
+
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+library(readxl)
+library(deldir)
+library(viridis)
+library(circlize)
+library(igraph)
+library(readr)
+library(magrittr)
+library(tidytree)
+
+
+```
+
+
+```{r}
+#Create ggraph data structure
+the_nodes <- read_excel("C:/Users/13035/OneDrive/Desktop/HW 4 DataSets/EmployeeEmails.xlsx", sheet = "Departments")
+
+the_edges <- read_excel("C:/Users/13035/OneDrive/Desktop/HW 4 DataSets/EmployeeEmails.xlsx", sheet = "Emails")
+
+network_department <- tbl_graph(nodes=the_nodes, edges=the_edges, directed = TRUE)
+
+network_department
+
+```
+
+
+Node link diagram
+```{r}
+# Graph 1 
+
+colors <- c("Purchase" = "blue", "HR" = "red", "Marketing" = "green" , "Operations" = "turquoise" , "Sales" = "purple", "Finance" = "orange")
+
+ggraph(network_department, layout = "kk") +
+  geom_edge_link() +
+  geom_node_point(aes(color = department), size = 4) +
+  scale_color_manual(values = colors) +
+  labs(title = "Department network diagram")
+  theme_void() +
+    
+
+
+
+```
+
+
+Arc graph
+```{r}
+#network graph 2
+
+ggraph(network_department, layout = 'linear') +
+  geom_edge_arc(aes(alpha = frequency), width = 1) +
+  geom_node_point(aes(color = department), size = 4) +
+  labs(title = "Email frequency by employee" ) +
+  scale_color_discrete(name = "Department") +
+  guides(color = guide_legend(override.aes = list(size=3))) + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+```
+
+circular graph
+
+```{r}
+#network graph 3
+
+ggraph(network_department, layout = "linear", circular = TRUE) + 
+  geom_node_point(aes(color = department), size = 7) + 
+  scale_color_manual(values = colors) +
+  geom_edge_arc(aes(width = frequency), alpha = 0.4, show.legend = TRUE) +
+  scale_edge_width_binned(breaks = seq(0,30,6), range=c(0.5,2))+
+  scale_size_continuous(name = "frequency", range = c(2,12)) +
+  labs(x = "Nodes", y = "Edges") +
+  coord_fixed() +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "#F8F8F8")) +
+   labs(title = "Email frequency by employee" )
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q2
+```{r}
+plant_data <-read.csv("C:/Users/13035/OneDrive/Desktop/HW 4 DataSets/COPlants_Magnoliopsida.csv", sep=',', stringsAsFactors = TRUE) 
+
+plant_taxonomy <- plant_data %>% select(Class, Order, Family, Genus) %>% distinct()
+
+plant.edges <- map_df(2:ncol(plant_taxonomy), ~select(plant_taxonomy, (.x-1):.x) %>% setNames(c("from", "to"))) %>% distinct()
+
+plant.graph <- as_tbl_graph(plant.edges) %>% 
+  activate(nodes) %>%
+  left_join(plant_taxonomy, by = c("name" = "Genus"))
+
+
+```
+
+
+```{r}
+
+plant.partition <- create_layout(plant.graph, layout = 'partition', circular = TRUE)
+
+ggraph(plant.partition) +
+ geom_edge_diagonal(alpha = 0.1) +
+geom_node_point(alpha = 0.8, aes(color = Order, filter = leaf), size = 1) +
+ theme_void() +
+ coord_equal() +
+   labs(title = "Circular Map" ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+```{r}
+
+plant.circlepack <- create_layout(plant.graph, layout = 'circlepack')
+
+ggraph(plant.circlepack) +
+  geom_edge_diagonal2(alpha = 0.1, color = "#333333") +
+  geom_node_point(alpha = 0.8, aes(color = Order, filter = leaf), size = 1) +
+  geom_node_text(aes(filter = depth == 1, label = name), check_overlap = TRUE, color = "#333333", alpha = 0.7, fontface = "bold", size = 3) +
+  theme_void() +
+  theme(legend.position = "none") + 
+   labs(title = "Heirarchy Circular Treemap" ) +
+  theme(plot.title = element_text(hjust = 0.5))
+  
+
+```
+
+
+```{r}
+plant.treemap <- create_layout(plant.graph, layout ='treemap')
+
+ggraph(plant.treemap) +
+  geom_node_tile(aes(fill = Order), colour = 'white', size = 0.2) +
+  geom_node_tile(aes(filter = depth == 1), colour = 'white', size = 1) +
+  geom_node_tile(aes(filter = depth == 2), colour = 'white', size = 0.6) +
+  geom_node_text(aes(filter = depth == 1, label = name), alpha = 0.2, check_overlap = TRUE, color = "black", size = 6, fontface = "bold") +
+  theme_void() +
+  theme(legend.position = "none") +
+  scale_fill_hue(c = 80, l = 75) + scale_x_continuous(expand = c(0.05, 0.05)) +
+scale_y_continuous(expand = c(0.05, 0.05)) +
+   labs(title = "Treemap" ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+
+
+```
+
