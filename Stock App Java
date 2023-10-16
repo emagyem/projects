@@ -1,0 +1,273 @@
+import javax.swing.JOptionPane;
+
+class Stock {
+	private String name;
+	private String symbol;
+	private	double lastPrice;
+	private	double yearLow;
+	private	double yearHigh;
+	private static int numStocks;
+	
+	
+	public String getName() {
+		return name;
+	}
+	
+
+	public String getSymbol() {
+		return symbol;
+	}
+	
+	public double getLastPrice() {
+		return lastPrice;
+	}
+	
+	
+	public double getYearLow() {
+		return yearLow;
+	}
+	
+	public void setLastPrice(double lastPrice) {
+		this.lastPrice =lastPrice;
+	}
+	
+	public double getYearHigh()	{
+		return yearHigh;
+	}
+	
+	public static int getNumStocks() {
+		return numStocks;
+	}
+	
+	public Stock (String name, String symbol, double lastPrice, double yearLow, double yearHigh)  {
+		
+		this.name = name;
+		this.symbol = symbol;
+		this.lastPrice = lastPrice;
+		this.yearLow = yearLow;
+		this.yearHigh = yearHigh;
+		
+		numStocks++;
+	}
+}
+
+public class EmmanuelAgyemangPA0701 {
+	
+	public static int getIntegerInput(boolean lowerLimitFlag, int lowerLimit, boolean upperLimitFlag,
+			int upperLimit, String prompt, String errorMsg) {
+		//set validInput flag to false 
+		boolean validInputFlag = false;
+		int input = 0;
+		String inputStr;
+
+		//start while loop that runs until vaiidInput equals true
+		while (validInputFlag == false) {
+			//exit the loop after one iteration assuming a valid int is entered
+			validInputFlag = true;
+			//prompt user to provide integer
+			///use try/catch to convert  user string to an integer
+			inputStr = JOptionPane.showInputDialog(prompt);
+			try {
+			input = Integer.parseInt(inputStr);
+			
+			}
+			//if the conversion is not successful (we entered the catch block) we display error message and set valid flag is false
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, errorMsg);
+				validInputFlag = false;
+			}
+			
+			//set validInput to true so we will exit the loop
+			 //validInputFlag = true;
+			
+		//if we received a valid integer AND upper limit is true, check to see if above the upper limit
+			if (input == upperLimit && upperLimitFlag == true) {
+				//if value is above , display error message set validInput to false so we go through the loop again
+				if (input > upperLimit) {
+					JOptionPane.showMessageDialog(null, errorMsg);
+					validInputFlag = false;
+				}
+			}
+			
+			//if we received a valid integer and lower limit flag is true, check to see if the value is below the lower limit
+			if ( input == lowerLimit && lowerLimitFlag == true) {
+				
+				//if value is below, display error message set validInput to false so we go through the loop again
+				if (input < lowerLimit) {
+					JOptionPane.showMessageDialog(null, errorMsg);
+					validInputFlag = false;
+				}
+			}
+		
+		}//end while loop
+		//return value
+		return input;
+	}
+	
+	public static double getDoubleInput(boolean lowerLimitFlag, double lowerLimit, boolean upperLimitFlag,
+			double upperLimit, String prompt, String errorMsg) {
+		//set validInput flag to false 
+		boolean validInputFlag = false;
+		double input = 0.0;
+		String inputStr;
+
+		//start while loop that runs until vaiidInput equals true
+		while (validInputFlag == false) {
+			//exit the loop after one iteration assuming a valid int is entered
+			validInputFlag = true;
+			//prompt user to provide integer
+			///use try/catch to convert  user string to an integer
+			inputStr = JOptionPane.showInputDialog(prompt);
+			try {
+			input = Double.parseDouble(inputStr);
+			
+			}
+			//if the conversion is not successful (we entered the catch block) we display error message and set valid flag is false
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, errorMsg);
+				validInputFlag = false;
+			}
+			
+			//set validInput to true so we will exit the loop
+			 //validInputFlag = true;
+			
+		//if we received a valid integer AND upper limit is true, check to see if above the upper limit
+			if (input == upperLimit && upperLimitFlag == true) {
+				//if value is above , display error message set validInput to false so we go through the loop again
+				if (input > upperLimit) {
+					JOptionPane.showMessageDialog(null, errorMsg);
+					validInputFlag = false;
+				}
+			}
+			
+			//if we received a valid integer and lower limit flag is true, check to see if the value is below the lower limit
+			if ( input == lowerLimit && lowerLimitFlag == true) {
+				
+				//if value is below, display error message set validInput to false so we go through the loop again
+				if (input < lowerLimit) {
+					JOptionPane.showMessageDialog(null, errorMsg);
+					validInputFlag = false;
+				}
+			}
+		
+		}//end while loop
+		//return value
+		return input;
+	}
+	
+public static int isStockInList(Stock[] stockArray, String stockSymbol) {
+		
+		int value = -1;
+		//loop through the Stock constructor
+		for (int i = 0; i < Stock.getNumStocks(); i++ ) {
+			//if symbol matches set val to i
+			if (stockArray[i].getSymbol().equals(stockSymbol)) {
+				value = i;
+			}
+		}
+		return value;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//declare variables
+		String stockName;
+		String stockSymbol;
+		double low;
+		double high;
+		double price;
+		String outputStr;
+		final int MAX_NUM_STOCKS = 10; 
+		String inputStr;
+		int ii;
+		int input;
+		Stock[] stock = new Stock[MAX_NUM_STOCKS];
+		//set stock array to new Stock objects
+		stock[0] = new Stock("Amazon", "AMZN", 3054.00, 1889.15, 3552.25 );
+		stock[1] = new Stock ("Lululemon", "LULU", 311.16, 177.77, 399.90);
+		stock[2] = new Stock ("Tesla", "TSLA", 635.62, 89.28, 900.40);
+		stock[3] = new Stock ("Disney", "DIS", 185.54, 92.56, 203.02);
+		
+			//iterate through the stock object until the we reach the maximum number of stocks 
+			for (ii = 0; Stock.getNumStocks() < MAX_NUM_STOCKS; ii++ ) {
+		
+			input = getIntegerInput(true, 2, true, 1, "Enter 0 to add a stock\nEnter 1 to get stats on stock\nEnter 2 to exit the program", "Invalid Input" );
+			
+			
+			if (input == 0) {
+				//check to see if list is full
+				if (Stock.getNumStocks() == stock.length){
+					JOptionPane.showMessageDialog(null, "The stock list is full");
+					
+				}
+				
+				//if not full add new stock. Get new stockName, stockSymbol, the yearLow, and the yearHigh from user
+				stockName = JOptionPane.showInputDialog("Enter stock name");
+				stockSymbol = JOptionPane.showInputDialog("Enter stock symbol");
+				low = getDoubleInput(true, 0.0, false, 0.0, "Enter the 52 week low for "+ stockName, "Invalid Input" );
+				high = getDoubleInput(true, 0.0, false, 0.0, "Enter the 52 week high for "+ stockName, "Invalid Input" );
+				price = getDoubleInput(true, 0.0, false, 0.0, "Enter the last trading price for "+ stockName, "Invalid Input" );
+				stock[Stock.getNumStocks()] = new Stock (stockName, stockSymbol,price, low, high);
+	
+				}
+			
+			// Get stock stats
+			if (input == 1) {
+				
+				 stockSymbol = JOptionPane.showInputDialog("Enter the stock symbol you're interested in ");
+				 int i = isStockInList(stock, stockSymbol);
+				 
+				 if (i == -1) {
+		           JOptionPane.showMessageDialog(null, "Symbol does not exist");
+				 }
+				 
+				 else {
+					 price = getDoubleInput(true, 8.00, true, 1.00, "Enter the price for "+stockSymbol, "Invlaid input");
+					 
+					 String output = ("Current price of " + stock[i].getName()+ " (" + stockSymbol + ")" + " is $" + price);
+					 
+					 if (price < stock[i].getYearLow()) {
+						 
+						 JOptionPane.showMessageDialog(null, output + "\nChange is $" + (String.format("%.2f", price - stock[i].getLastPrice())) + 
+						".\nRecent recorded price is $" + stock[i].getLastPrice() + 
+						"\nCurrent price is: $" + (String.format("%.2f", ((price - stock[i].getYearLow()) *-1 ))) + " below the stock's 52 week low of $" 
+						+ stock[i].getYearLow());
+						 
+					stock[i].setLastPrice(price);
+						 
+					 }
+					 
+					 else if (price > stock[i].getYearHigh()) {
+						 
+						  JOptionPane.showMessageDialog(null, output + "\nChange is $" + (String.format("%.2f", price - stock[i].getLastPrice() )) + 
+								 "\nRecent recorded price is $" + stock[i].getLastPrice() +
+								 "\nCurrent price is: $" + (String.format("%.2f" , ((price - stock[i].getYearHigh())))) + " higher than the stock's 52 week high of $" 
+								 + String.format("%.2f", stock[i].getYearHigh()) + "." );
+						 stock[i].setLastPrice(price);
+					 }
+					 
+					 else {
+						 JOptionPane.showMessageDialog(null, output + "\nChange is $" + String.format("%.2f", price - stock[i].getLastPrice()) + 
+								"from their recently recorded price of $" + String.format("%.2f", stock[i].getLastPrice()));
+						 
+						 JOptionPane.showMessageDialog(null, output + "\nCurrent price is $" 
+						 + String.format("%.2f", (stock[i].getYearLow()-price) * -1) 
+						 + " above it's 52 week low of $" + stock[i].getYearLow() + "and $" 
+						 + String.format("%.2f", stock[i].getYearHigh() - price) 
+						 + String.format("%.2f", stock[i].getYearHigh()));
+						 
+						 stock[i].setLastPrice(price);
+						 
+					 }
+					 
+				 }
+
+			}
+			//Exit the program
+			if (input == 2) {
+				System.exit(0);
+			}
+			}
+	}
+
+}
